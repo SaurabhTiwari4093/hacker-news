@@ -53,7 +53,7 @@ export default function NewsComp(props) {
                     <div className="row">
                         {articles.map((element,index) => {
                             return <div className="col-md-4 my-4 d-flex justify-content-center" key={index}>
-                                <NewsItems mode={props.mode} title={element.title ? element.title : (element.story_title ? element.story_title : (element.story_text ? element.story_text : " "))} author={element.author ? element.author : "Unknown"} time={element.created_at ? element.created_at : " "} url={element.url ? element.url : (element.story_url ? element.story_url : "#")} />
+                                <NewsItems mode={props.mode} title={element.title ? element.title : (element.story_title ? element.story_title : (element.story_text ? element.story_text : " "))} author={element.author ? element.author : "Unknown"} time={element.created_at ? element.created_at : " "} url={element.url ? element.url : (element.story_url ? element.story_url : "#")} comment={element.comment_text?element.comment_text:''}/>
                             </div>
                         })}
                     </div>
