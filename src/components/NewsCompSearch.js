@@ -47,11 +47,11 @@ export default function NewsComp(props) {
 
     return (
         <>
-            <div class="container input-group mb-4" style={{ marginTop: '100px', paddingRight: 30, paddingLeft: 30 }}>
-                <span class="input-group-text">
+            <div className="container input-group mb-4" style={{ marginTop: '100px', paddingRight: 30, paddingLeft: 30 }}>
+                <span className="input-group-text">
                     <img src={SearchIcon} alt="search-icon" height={20} width={20} />
                 </span>
-                <input class="form-control" placeholder="Search" type="search" aria-label="Search" onChange={(e) => callSearchApi(e.target.value)} />
+                <input className="form-control" placeholder="Search" type="search" aria-label="Search" onChange={(e) => callSearchApi(e.target.value)} />
             </div>
             <InfiniteScroll
                 dataLength={articles.length}
