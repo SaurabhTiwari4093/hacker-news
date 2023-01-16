@@ -10,12 +10,14 @@ export default function NewsComp(props) {
     const [totalPage, setTotalPage] = useState(0)
     const [page, setPage] = useState(1)
     const [pageSize, setPageSize] = useState(12)
-    const [serachQuery, setSearchQuery] = useState('');
+    var searchQuery = '';
+    var searchTag = '';
+    var searchByDate = 'search';
 
     const updateNews = async () => {
         props.setProgress(0)
         props.setProgress(20)
-        const url = `http://hn.algolia.com/api/v1/search?page=${page}&hitsPerPage=${pageSize}&query=${serachQuery}`;
+        const url = `http://hn.algolia.com/api/v1/${searchByDate}?page=${page}&hitsPerPage=${pageSize}&query=${searchQuery}&tags=${searchTag}`;
         props.setProgress(40)
         let data = await fetch(url);
         props.setProgress(60)
@@ -28,7 +30,7 @@ export default function NewsComp(props) {
     }
 
     const Next = async () => {
-        const url = `http://hn.algolia.com/api/v1/search?page=${page + 1}&hitsPerPage=${pageSize}&query=${serachQuery}`;
+        const url = `http://hn.algolia.com/api/v1/${searchByDate}?page=${page + 1}&hitsPerPage=${pageSize}&query=${searchQuery}&tags=${searchTag}`;
         setPage(page + 1)
         let data = await fetch(url);
         let parsedData = await data.json()
@@ -37,12 +39,22 @@ export default function NewsComp(props) {
     }
 
     useEffect(() => {
-        updateNews()
+        updateNews('search');
     }, [])
 
     const callSearchApi = (query) => {
-        setSearchQuery(query);
+        searchQuery = query;
         updateNews()
+    }
+
+    const callSearchTagApi = (tag) => {
+        searchTag = tag;
+        updateNews()
+    }
+
+    const callSearchByDateApi = (dateSelect) => {
+        searchByDate = dateSelect;
+        updateNews();
     }
 
     return (
@@ -55,15 +67,15 @@ export default function NewsComp(props) {
             </div>
             <div className="container input-group my-4" style={{ paddingRight: 30, paddingLeft: 30 }}>
                 <span className={`input-group-text bg-${props.mode}`}>Search</span>
-                <select className={`form-select bg-${props.mode}`} aria-label="All">
-                    <option selected value="All">All</option>
-                    <option value="Stories">Stories</option>
-                    <option value="Comments">Comments</option>
+                <select className={`form-select bg-${props.mode}`} aria-label="All" onChange={(e) => callSearchTagApi(e.target.value)}>
+                    <option selected value=''>All</option>
+                    <option value="story">Stories</option>
+                    <option value="comment">Comments</option>
                 </select>
                 <span className={`input-group-text bg-${props.mode}`}>by</span>
-                <select className={`form-select bg-${props.mode}`} aria-label="Popularity">
-                    <option selected value="Popularity">Popularity</option>
-                    <option value="Date">Date</option>
+                <select className={`form-select bg-${props.mode}`} aria-label="Popularity" onChange={(e) => callSearchByDateApi(e.target.value)}>
+                    <option selected value="search">Popularity</option>
+                    <option value="search_by_date">Date</option>
                 </select>
                 <span className={`input-group-text bg-${props.mode}`}>for</span>
                 <select className={`form-select bg-${props.mode}`} aria-label="All time">
