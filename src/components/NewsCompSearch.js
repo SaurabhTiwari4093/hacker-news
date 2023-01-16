@@ -9,8 +9,8 @@ import moment from 'moment';
 export default function NewsComp(props) {
     const [articles, setArticles] = useState([])
     const [totalPage, setTotalPage] = useState(0)
-    const [page, setPage] = useState(1)
     const [pageSize, setPageSize] = useState(12)
+    var page = 1;
     var searchQuery = '';
     var searchTag = '';
     var searchByDate = 'search';
@@ -19,9 +19,10 @@ export default function NewsComp(props) {
     const updateNews = async () => {
         props.setProgress(0)
         props.setProgress(20)
-        const url = `http://hn.algolia.com/api/v1/${searchByDate}?page=${page}&hitsPerPage=${pageSize}&query=${searchQuery}&tags=${searchTag}&numericFilters=${timeInterval}`;
+        const url = `http://hn.algolia.com/api/v1/${searchByDate}?page=${page}&hitsPerPage=${pageSize}&query=${searchQuery}&tags=${searchTag}&numericFilters=${timeInterval}`;g
+        const encodeURL = encodeURI(url);
         props.setProgress(40)
-        let data = await fetch(url);
+        let data = await fetch(encodeURL);
         props.setProgress(60)
         let parsedData = await data.json();
         console.log(parsedData)
@@ -32,9 +33,11 @@ export default function NewsComp(props) {
     }
 
     const Next = async () => {
-        const url = `http://hn.algolia.com/api/v1/${searchByDate}?page=${page + 1}&hitsPerPage=${pageSize}&query=${searchQuery}&tags=${searchTag}&numericFilters=${timeInterval}`;
-        setPage(page + 1)
-        let data = await fetch(url);
+        page = page + 1;
+        const url = `http://hn.algolia.com/api/v1/${searchByDate}?page=${page}&hitsPerPage=${pageSize}&query=${searchQuery}&tags=${searchTag}&numericFilters=${timeInterval}`;
+        console.log(url);
+        const encodeURL = encodeURI(url);
+        let data = await fetch(encodeURL);
         let parsedData = await data.json()
         setArticles(articles.concat(parsedData.hits))
         setTotalPage(parsedData.nbPages)
@@ -60,10 +63,8 @@ export default function NewsComp(props) {
     }
 
     const callSearchByTimeInterval = (timeIntervalSelected) => {
-        const X = moment().subtract(1, timeIntervalSelected).format('x');
-        console.log(X);
-        timeInterval = "created_at_i>"+X;
-        console.log(timeInterval)
+        const X = moment().subtract(1, timeIntervalSelected).format('x') / 1000;
+        timeInterval = "created_at_i>" + X;
         updateNews();
     }
 
