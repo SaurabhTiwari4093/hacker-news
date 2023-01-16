@@ -1,4 +1,3 @@
-import './App.css';
 import NavBar from './components/NavBar';
 import NewsComp from './components/NewsComp';
 import NewsCompNew from './components/NewsCompNew';
