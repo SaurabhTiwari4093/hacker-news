@@ -5,7 +5,6 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import SearchIcon from '../components/images/search.png';
 import moment from 'moment';
 
-
 export default function NewsComp(props) {
     const [articles, setArticles] = useState([])
     const [totalPage, setTotalPage] = useState(0)
@@ -15,6 +14,9 @@ export default function NewsComp(props) {
     const [searchTag, setSearchTag] = useState('');
     const [searchByDate, setSearchByDate] = useState('search');
     const [timeInterval, setTimeInterval] = useState('');
+    const [showCustomDate, setShowCustomDate] = useState(false);
+    const [startDate, setStartDate] = useState(Date.now());
+    const [endDate, setEndDate] = useState(moment().subtract(1, 'days').format('x') / 1000);
 
     const updateNews = async () => {
         props.setProgress(0)
@@ -46,21 +48,50 @@ export default function NewsComp(props) {
     }, [searchQuery, searchTag, searchByDate, timeInterval])
 
     const callSearchApi = (query) => {
+        setPage(1);
         setSearchQuery(query);
     }
 
     const callSearchTagApi = (tag) => {
+        setPage(1);
         setSearchTag(tag);
     }
 
     const callSearchByDateApi = (dateSelect) => {
+        setPage(1);
         setSearchByDate(dateSelect)
     }
 
     const callSearchByTimeInterval = (timeIntervalSelected) => {
-        const X = moment().subtract(1, timeIntervalSelected).format('x') / 1000;
-        const timeIntervalInside = "created_at_i>" + X;
-        setTimeInterval(timeIntervalInside);
+        if (timeIntervalSelected === "customInput") {
+            console.log("customInput")
+            setShowCustomDate(true);
+        }
+        else if (timeIntervalSelected !== "") {
+            setPage(1);
+            setShowCustomDate(false);
+            const X = moment().subtract(1, timeIntervalSelected).format('x') / 1000;
+            const timeIntervalInside = "created_at_i>" + X;
+            setTimeInterval(timeIntervalInside);
+        }
+        else {
+            setShowCustomDate(false);
+            setTimeInterval('');
+        }
+    }
+
+    const callApiOnCustomInput = (e) => {
+        e.preventDefault()
+        const X = moment(startDate).format('x') / 1000;
+        const Y = moment(endDate).format('x') / 1000;
+        if (Y < X) {
+            alert("To Date cannot be less then from date");
+        }
+        else {
+            setPage(1);
+            const timeIntervalInside = "created_at_i>" + X + "," + "created_at_i<" + Y;
+            setTimeInterval(timeIntervalInside);
+        }
     }
 
     return (
@@ -90,8 +121,18 @@ export default function NewsComp(props) {
                     <option value="weeks">Past Week</option>
                     <option value="months">Past Month</option>
                     <option value="year">Past Year</option>
+                    <option value="customInput" type="datetime-local">Custom Input</option>
                 </select>
             </div>
+            {
+                showCustomDate ? <form className="container input-group my-4" style={{ paddingRight: 30, paddingLeft: 30 }} onSubmit={callApiOnCustomInput}>
+                    <span className={`input-group-text bg-${props.mode}`}>From</span>
+                    <input className={`form-control bg-${props.mode}`} placeholder="Search" type="datetime-local" aria-label="Search" required onChange={(e) => setStartDate(e.target.value)} />
+                    <span className={`input-group-text bg-${props.mode}`}>To</span>
+                    <input className={`form-control bg-${props.mode}`} placeholder="Search" type="datetime-local" aria-label="Search" required onChange={(e) => setEndDate(e.target.value)} />
+                    <button class="btn btn-outline-secondary" type="submit" id="button-addon2">Search</button>
+                </form> : <div />
+            }
             <InfiniteScroll
                 dataLength={articles.length}
                 next={Next}
