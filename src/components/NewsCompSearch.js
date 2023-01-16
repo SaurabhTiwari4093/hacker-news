@@ -3,6 +3,7 @@ import NewsItems from './NewsItems'
 import Spinner from './Spinner';
 import InfiniteScroll from "react-infinite-scroll-component";
 import SearchIcon from '../components/images/search.png';
+import moment from 'moment';
 
 
 export default function NewsComp(props) {
@@ -13,11 +14,12 @@ export default function NewsComp(props) {
     var searchQuery = '';
     var searchTag = '';
     var searchByDate = 'search';
+    var timeInterval = '';
 
     const updateNews = async () => {
         props.setProgress(0)
         props.setProgress(20)
-        const url = `http://hn.algolia.com/api/v1/${searchByDate}?page=${page}&hitsPerPage=${pageSize}&query=${searchQuery}&tags=${searchTag}`;
+        const url = `http://hn.algolia.com/api/v1/${searchByDate}?page=${page}&hitsPerPage=${pageSize}&query=${searchQuery}&tags=${searchTag}&numericFilters=${timeInterval}`;
         props.setProgress(40)
         let data = await fetch(url);
         props.setProgress(60)
@@ -30,7 +32,7 @@ export default function NewsComp(props) {
     }
 
     const Next = async () => {
-        const url = `http://hn.algolia.com/api/v1/${searchByDate}?page=${page + 1}&hitsPerPage=${pageSize}&query=${searchQuery}&tags=${searchTag}`;
+        const url = `http://hn.algolia.com/api/v1/${searchByDate}?page=${page + 1}&hitsPerPage=${pageSize}&query=${searchQuery}&tags=${searchTag}&numericFilters=${timeInterval}`;
         setPage(page + 1)
         let data = await fetch(url);
         let parsedData = await data.json()
@@ -57,6 +59,14 @@ export default function NewsComp(props) {
         updateNews();
     }
 
+    const callSearchByTimeInterval = (timeIntervalSelected) => {
+        const X = moment().subtract(1, timeIntervalSelected).format('x');
+        console.log(X);
+        timeInterval = "created_at_i>"+X;
+        console.log(timeInterval)
+        updateNews();
+    }
+
     return (
         <>
             <div className="container input-group" style={{ marginTop: '100px', paddingRight: 30, paddingLeft: 30 }}>
@@ -78,12 +88,12 @@ export default function NewsComp(props) {
                     <option value="search_by_date">Date</option>
                 </select>
                 <span className={`input-group-text bg-${props.mode}`}>for</span>
-                <select className={`form-select bg-${props.mode}`} aria-label="All time">
-                    <option selected value="AllTime">All Time</option>
-                    <option value="Last24h">Last 24h</option>
-                    <option value="PastWeek">Past Week</option>
-                    <option value="PastMonth">Past Month</option>
-                    <option value="PastYear">Past Year</option>
+                <select className={`form-select bg-${props.mode}`} aria-label="All time" onChange={(e) => callSearchByTimeInterval(e.target.value)}>
+                    <option selected value="">All Time</option>
+                    <option value="days">Last 24h</option>
+                    <option value="weeks">Past Week</option>
+                    <option value="months">Past Month</option>
+                    <option value="year">Past Year</option>
                 </select>
             </div>
             <InfiniteScroll
