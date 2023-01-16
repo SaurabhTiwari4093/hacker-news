@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import NewsItems from './NewsItems'
 import Spinner from './Spinner';
 import InfiniteScroll from "react-infinite-scroll-component";
+import SearchIcon from '../components/images/search.png';
 
 
 export default function NewsComp(props) {
@@ -9,11 +10,12 @@ export default function NewsComp(props) {
     const [totalPage, setTotalPage] = useState(0)
     const [page, setPage] = useState(1)
     const [pageSize, setPageSize] = useState(12)
+    const [serachQuery, setSearchQuery] = useState('');
 
     const updateNews = async () => {
         props.setProgress(0)
         props.setProgress(20)
-        const url = `http://hn.algolia.com/api/v1/search?page=${page}&hitsPerPage=${pageSize}`;
+        const url = `http://hn.algolia.com/api/v1/search?page=${page}&hitsPerPage=${pageSize}&query=${serachQuery}`;
         props.setProgress(40)
         let data = await fetch(url);
         props.setProgress(60)
@@ -26,7 +28,7 @@ export default function NewsComp(props) {
     }
 
     const Next = async () => {
-        const url = `http://hn.algolia.com/api/v1/search?page=${page + 1}&hitsPerPage=${pageSize}`;
+        const url = `http://hn.algolia.com/api/v1/search?page=${page + 1}&hitsPerPage=${pageSize}&query=${serachQuery}`;
         setPage(page + 1)
         let data = await fetch(url);
         let parsedData = await data.json()
@@ -38,10 +40,19 @@ export default function NewsComp(props) {
         updateNews()
     }, [])
 
+    const callSearchApi=(query)=>{
+        setSearchQuery(query);
+        updateNews()
+    }
 
     return (
         <>
-            <h1 className='text-center' style={{ marginTop: '100px', textShadow: "1px 1px 1px #2222226b" }}>Top Search Headlines</h1>
+            <div class="container input-group mb-4" style={{ marginTop: '100px', paddingRight: 30, paddingLeft: 30 }}>
+                <span class="input-group-text">
+                    <img src={SearchIcon} alt="search-icon" height={20} width={20} />
+                </span>
+                <input class="form-control" placeholder="Search" type="search" aria-label="Search" onChange={(e) => callSearchApi(e.target.value)} />
+            </div>
             <InfiniteScroll
                 dataLength={articles.length}
                 next={Next}
