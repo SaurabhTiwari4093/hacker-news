@@ -1,6 +1,8 @@
 import './App.css';
 import NavBar from './components/NavBar';
 import NewsComp from './components/NewsComp';
+import NewsCompNew from './components/NewsCompNew';
+import NewsCompSearch from './components/NewsCompSearch';
 import LoadingBar from 'react-top-loading-bar'
 import {
   BrowserRouter as Router,
@@ -37,13 +39,8 @@ function App() {
     <div className='container-fluid'>
       <Routes>
       <Route path="/" element={<NewsComp mode={mode} setProgress={setProgress} key="home" category="general"/>}/>
-      <Route path="/business" element={<NewsComp mode={mode} setProgress={setProgress} key="business" category="business"/>}/>
-      <Route path="/entertainment" element={<NewsComp mode={mode} setProgress={setProgress} key="entertainment" category="entertainment"/>}/>
-      <Route path="/general" element={<NewsComp mode={mode} setProgress={setProgress} key="general" category="general"/>}/>
-      <Route path="/health" element={<NewsComp mode={mode} setProgress={setProgress} key="health" category="health"/>}/>
-      <Route path="/science" element={<NewsComp mode={mode} setProgress={setProgress} key="science" category="science"/>}/>
-      <Route path="/sports" element={<NewsComp mode={mode} setProgress={setProgress} key="sports" category="sports"/>}/>
-      <Route path="/technology" element={<NewsComp mode={mode} setProgress={setProgress} key="technology" category="technology"/>}/>
+      <Route path="/new" element={<NewsCompNew mode={mode} setProgress={setProgress} key="business" category="business"/>}/>
+      <Route path="/search" element={<NewsCompSearch mode={mode} setProgress={setProgress} key="entertainment" category="entertainment"/>}/>
       </Routes>
     </div>
     </Router>
