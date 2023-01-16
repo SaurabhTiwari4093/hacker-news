@@ -18,7 +18,7 @@ export default function NewsItems(props) {
       <div className="card-body mt-3">
         <h5 className="card-title">{props.title}</h5>
         <p className="text-secondary">{dateFormat(props.time)}</p>
-        <a href={props.url} className="btn btn-primary btn-sm shadow" target="_blank">
+        <a href={props.url} className="btn btn-primary btn-sm shadow">
           Read More
         </a>
       </div>
