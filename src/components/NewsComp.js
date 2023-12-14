@@ -13,7 +13,7 @@ export default function NewsComp(props) {
     const updateNews = async () => {
         props.setProgress(0)
         props.setProgress(20)
-        const url = `http://hn.algolia.com/api/v1/search?page=${page}&hitsPerPage=${pageSize}`;
+        const url = `https://hn.algolia.com/api/v1/search?page=${page}&hitsPerPage=${pageSize}`;
         props.setProgress(40)
         let data = await fetch(url);
         props.setProgress(60)
@@ -26,7 +26,7 @@ export default function NewsComp(props) {
     }
 
     const Next = async () => {
-        const url = `http://hn.algolia.com/api/v1/search?page=${page + 1}&hitsPerPage=${pageSize}`;
+        const url = `https://hn.algolia.com/api/v1/search?page=${page + 1}&hitsPerPage=${pageSize}`;
         setPage(page + 1)
         let data = await fetch(url);
         let parsedData = await data.json()
